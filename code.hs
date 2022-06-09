@@ -67,7 +67,7 @@ perms (x : xs) = concat (map (interleave x) (perms xs)) -- 🤯
 -- > perms [1,2,3]
 --   [[1,2,3],[2,1,3],[2,3,1],[1,3,2],[3,1,2],[3,2,1]]
 
-function returns all choices
+-- function returns all choices
 choices :: [a] -> [[a]]
 choices = concatMap perms . subs -- concat . map perms . subs
 -- Break down choices
@@ -78,9 +78,8 @@ choices = concatMap perms . subs -- concat . map perms . subs
 -- > concat [[[]],[[2]],[[1]],[[1,2],[2,1]]]
 --   [[],[2],[1],[1,2],[2,1]]
 
--- formalizing the problem
 solution :: Expr -> [Int] -> Int -> Bool
-solution e ns n = 
+solution e ns n =
         elem (values e) (choices ns) && eval e == [n]
 -- testing
 -- breaking down (1 + 50) * (25 - 10)
@@ -97,13 +96,11 @@ targetnum = 765
 -- lets break down "solution e numlst 765"
 -- > valueslist values e
 --   [1,50,25,10]
--- > choiceslist = choices numlst  
+-- > choiceslist = choices numlst
 --   huge list
 -- > elem valueslist choiceslist
 --   True
--- > eval e 
+-- > eval e
 --   [765]
 -- > eval e == targetnum
 --   True
-
--- Brute force solution
