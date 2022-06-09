@@ -1,6 +1,7 @@
 #+TITLE: Programming in Haskell - Ch9
 #+PROPERTY: header-args :tangle code
 #+auto-tangle: t
+#+STARTUP: showeverything
 
 * TABLE OF CONTENTS :toc:
 - [[#imports][Imports]]
