@@ -1,0 +1,5 @@
+#+Title: Programming in Haskell - Ch9
+#+PROPERTY: header-argS :tangle code.hs
+#+auto-tangle: t
+
+* TABLE OF CONTENTS :toc:
