@@ -7,11 +7,11 @@
 * TABLE OF CONTENTS :toc:
 - [[#imports][Imports]]
 - [[#arithmetic-operators][Arithmetic operators]]
-- [[#valid-function][Valid Function]]
-- [[#apply-function][Apply Function]]
+- [[#valid-function][Valid function]]
+- [[#apply-function][Apply function]]
 - [[#declare-type-expr][Declare Type: Expr]]
-- [[#values-function][Values Function]]
-- [[#eval-function][Eval Function]]
+- [[#values-function][Values function]]
+- [[#eval-function][Eval function]]
 - [[#combinatorial-functions][Combinatorial functions]]
   - [[#subs-function][Subs function]]
   - [[#interleave-function][Interleave function]]
@@ -19,6 +19,11 @@
   - [[#choices-function][Choices function]]
 - [[#formalizing-the-problem][Formalizing the problem]]
 - [[#brute-force-solution][Brute Force solution]]
+  - [[#split-function][Split function]]
+  - [[#exprs-function][Exprs function]]
+  - [[#combine-function][Combine function]]
+  - [[#solutions-function][Solutions function]]
+- [[#performance-testing][Performance testing]]
 
 * Imports
 #+begin_src haskell
@@ -39,7 +44,7 @@ instance Show Op where
   show Mul = "*"
   show Div = "/"
 #+end_src
-* Valid Function
+* Valid function
 Testing if two positive integer numbers operations gives another positive natural number
 #+begin_src haskell
 valid :: Op -> Int -> Int -> Bool
@@ -49,7 +54,7 @@ valid Mul _ _ = True
 valid Div x y = x `mod` y == 0
 #+end_src
 
-* Apply Function
+* Apply function
 Apply function to perform the valid operations
 #+begin_src haskell
 apply :: Op -> Int -> Int -> Int
@@ -72,14 +77,14 @@ instance Show Expr where
       brak e = "(" ++ show e ++ ")"
 #+end_src
 
-* Values Function
-#+begin_src haskell
+* Values function
 Function returns the list of values in expression
+#+begin_src haskell
 values :: Expr -> [Int]
 values (Val n) = [n]
 values (App _ l r) = values l ++ values r
 #+end_src
-* Eval Function
+* Eval function
 Eval function: returns the over all value of an expressoin is positive natural number
 #+begin_src haskell
 eval :: Expr -> [Int]
@@ -171,3 +176,50 @@ targetnum = 765
 #+end_src
 
 * Brute Force solution
+First approach is to generate all possible expressions over a given list of numbers
+
+** Split function
+Return all possible ways of splitting a list into two non-empty lists that append to give original list
+#+begin_src haskell
+split :: [a] ->  [([a], [a])]
+split [] = []
+split [_] = []
+split (x:xs) = ([x], xs) : [(x:ls,rs) | (ls,rs) <- split xs]
+-- > split [1,2,3,4]
+-- [([1],[2,3,4]),([1,2],[3,4]),([1,2,3],[4])]
+#+end_src
+
+** Exprs function
+Function will return all possible expressions
+#+begin_src haskell
+exprs :: [Int] -> [Expr]
+exprs [] = []
+exprs [n] = [Val n]
+exprs ns = [e | (ls,rs) <- split ns,
+              l <- exprs ls,
+              r <- exprs rs,
+              e <- combine l r]
+#+end_src
+
+** Combine function
+#+begin_src haskellE
+combine :: Expr -> Expr -> [Expr]
+combine l r = [App o l r | o <- ops]
+
+ops :: [Op]
+ops = [Add, Sub, Mul, Div]
+#+end_src
+
+** Solutions function
+Function that returns all possible expressions that solve an instance of the countdown problem
+#+begin_src haskell
+solutions :: [Int] -> Int -> [Expr]
+solutions ns n = [e | ns' <- choices ns, e <- exprs ns', eval e == [n]]
+#+end_src
+
+* Performance testing
+#+begin_src haskell
+main :: IO ()
+main = print (solutions [1,3,7,10,25,50] 765)
+
+#+end_src

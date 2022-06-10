@@ -32,7 +32,6 @@ instance Show Expr where
       brak (Val n) = show n
       brak e = "(" ++ show e ++ ")"
 
-Function returns the list of values in expression
 values :: Expr -> [Int]
 values (Val n) = [n]
 values (App _ l r) = values l ++ values r
@@ -104,3 +103,30 @@ targetnum = 765
 --   [765]
 -- > eval e == targetnum
 --   True
+
+split :: [a] ->  [([a], [a])]
+split [] = []
+split [_] = []
+split (x:xs) = ([x], xs) : [(x:ls,rs) | (ls,rs) <- split xs]
+-- > split [1,2,3,4]
+-- [([1],[2,3,4]),([1,2],[3,4]),([1,2,3],[4])]
+
+exprs :: [Int] -> [Expr]
+exprs [] = []
+exprs [n] = [Val n]
+exprs ns = [e | (ls,rs) <- split ns,
+              l <- exprs ls,
+              r <- exprs rs,
+              e <- combine l r]
+
+combine :: Expr -> Expr -> [Expr]
+combine l r = [App o l r | o <- ops]
+
+ops :: [Op]
+ops = [Add, Sub, Mul, Div]
+
+solutions :: [Int] -> Int -> [Expr]
+solutions ns n = [e | ns' <- choices ns, e <- exprs ns', eval e == [n]]
+
+main :: IO ()
+main = print (solutions [1,3,7,10,25,50] 765)
