@@ -1,4 +1,4 @@
-module Countdown where
+module Main where
 
 import Data.List
 import System.IO
