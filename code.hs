@@ -158,6 +158,11 @@ valid Sub x y = x > y
 valid Mul x y = x /= 1 && y/= 1 && x <= y
 valid Div x y = y /= 1 && x `mod` y == 0
 
+-- now it's blazing fast
+
+-- compile and run
+-- ghc -O2 code.hs
+-- ./code
 main :: IO ()
 -- main = print (solutions [1,3,7,10,25,50] 765) -- will take longer time
 main = print (solutions' [1,3,7,10,25,50] 765) -- fast
